@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <TargetFrameworks>netstandard2.0;netstandard2.1;net462;net6.0;net7.0</TargetFrameworks>
+	<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+	<VersionPrefix>1.0.0-alpha</VersionPrefix>
+	<Description>Create queries from a class and add execution to Sql server database</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GSqlQuery.Runner" Version="1.0.0-alpha" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.1" />
+  </ItemGroup>
+
+</Project>
