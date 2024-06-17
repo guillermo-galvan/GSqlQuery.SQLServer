@@ -4,7 +4,7 @@
     {
         public static ISqlBulkCopy Create(string connectionString)
         {
-            return new BulkInsertExecute(connectionString);
+            return new BulkExecute(connectionString);
         }
     }
 }

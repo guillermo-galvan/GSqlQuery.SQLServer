@@ -1,6 +1,4 @@
-﻿using GSqlQuery.Runner;
-
-namespace GSqlQuery.SQLServer
+﻿namespace GSqlQuery.SQLServer
 {
     public class SqlServerConnectionOptions : ConnectionOptions<SqlServerDatabaseConnection>
     {
@@ -12,8 +10,8 @@ namespace GSqlQuery.SQLServer
             base(new SqlServerStatements(), new SqlServerDatabaseManagement(connectionString, events))
         { }
 
-        public SqlServerConnectionOptions(IStatements statements, SqlServerDatabaseManagement sqlServerDatabaseManagement) :
-            base(statements, sqlServerDatabaseManagement)
+        public SqlServerConnectionOptions(IFormats formats, SqlServerDatabaseManagement sqlServerDatabaseManagement) :
+            base(formats, sqlServerDatabaseManagement)
         {
 
         }

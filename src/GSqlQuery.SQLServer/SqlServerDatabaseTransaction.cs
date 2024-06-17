@@ -1,18 +1,12 @@
 ﻿using GSqlQuery.Runner;
-using System.Data.Common;
+using Microsoft.Data.SqlClient;
 
 namespace GSqlQuery.SQLServer
 {
-    public sealed class SqlServerDatabaseTransaction : Transaction
+    public sealed class SqlServerDatabaseTransaction(SqlServerDatabaseConnection connection, SqlTransaction transaction) : 
+        Transaction<SqlServerDatabaseConnection, SqlCommand, SqlTransaction, SqlConnection>(connection, transaction),
+        ITransaction<SqlServerDatabaseConnection, SqlTransaction>
     {
-        public SqlServerDatabaseTransaction(SqlServerDatabaseConnection connection, DbTransaction transaction) : base(connection, transaction)
-        {
-        }
-
-        public SqlServerDatabaseConnection Connection => (SqlServerDatabaseConnection)_connection;
-
-        public DbTransaction Transaction => _transaction;
-
         ~SqlServerDatabaseTransaction()
         {
             Dispose(disposing: false);

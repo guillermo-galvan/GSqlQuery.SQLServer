@@ -8,16 +8,12 @@ using System.Threading.Tasks;
 
 namespace GSqlQuery.SQLServer
 {
-    internal class BulkInsertExecute : ISqlBulkCopyExecute
+    internal class BulkExecute : ISqlBulkCopyExecute
     {
         private readonly Queue<DataTable> _tables;
         private readonly string _connectionString;
 
-        public IDatabaseManagement<SqlServerDatabaseConnection> DatabaseManagement { get; }
-
-        IDatabaseManagement<SqlConnection> IExecute<int, SqlConnection>.DatabaseManagement => throw new NotImplementedException();
-
-        public BulkInsertExecute(string connectionString)
+        public BulkExecute(string connectionString)
         {
             if (string.IsNullOrWhiteSpace(connectionString))
             {
@@ -26,7 +22,6 @@ namespace GSqlQuery.SQLServer
 
             _connectionString = connectionString;
             _tables = new Queue<DataTable>();
-            DatabaseManagement = new SqlServerDatabaseManagement(_connectionString);
         }
 
         public int Execute()
@@ -83,7 +78,7 @@ namespace GSqlQuery.SQLServer
 
         public ISqlBulkCopyExecute Copy<T>(IEnumerable<T> values)
         {
-            _tables.Enqueue(BulkCopyExtension.FillTable(values));
+            _tables.Enqueue(BatchExtension.FillTable(values));
             return this;
         }
 
@@ -111,8 +106,6 @@ namespace GSqlQuery.SQLServer
                 }
             }
         }
-
-        IBulkCopyExecute IBulkCopy.Copy<T>(IEnumerable<T> values) => Copy(values);
 
         private void ValidConnection(SqlConnection sqlConnection)
         {

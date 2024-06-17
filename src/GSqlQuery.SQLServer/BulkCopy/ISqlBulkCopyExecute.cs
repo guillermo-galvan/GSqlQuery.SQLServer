@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace GSqlQuery.SQLServer
 {
-    public interface ISqlBulkCopyExecute : IBulkCopyExecute, ISqlBulkCopy, IExecute<int, SqlConnection>
+    public interface ISqlBulkCopyExecute : ISqlBulkCopy, IExecute<int>
     {
         int Execute(SqlBulkCopyOptions sqlBulkCopyOptions);
 

@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace GSqlQuery.SQLServer
 {
-    public interface ISqlBulkCopy : IBulkCopy
+    public interface ISqlBulkCopy
     {
-        new ISqlBulkCopyExecute Copy<T>(IEnumerable<T> values);
+        ISqlBulkCopyExecute Copy<T>(IEnumerable<T> values);
     }
 }

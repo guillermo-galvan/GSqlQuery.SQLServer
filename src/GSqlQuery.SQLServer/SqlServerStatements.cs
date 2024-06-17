@@ -1,6 +1,6 @@
 ﻿namespace GSqlQuery.SQLServer
 {
-    public class SqlServerStatements : Statements
+    public class SqlServerStatements : DefaultFormats
     {
         public override string Format => "[{0}]";
 
