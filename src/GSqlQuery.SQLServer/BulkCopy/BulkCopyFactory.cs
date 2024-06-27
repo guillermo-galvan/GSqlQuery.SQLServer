@@ -2,7 +2,7 @@
 {
     public static class BulkCopyFactory
     {
-        public static ISqlBulkCopy Create(string connectionString)
+        public static ISqlBulkCopyExecute Create(string connectionString)
         {
             return new BulkExecute(connectionString);
         }

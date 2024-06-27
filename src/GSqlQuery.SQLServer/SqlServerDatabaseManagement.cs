@@ -1,5 +1,7 @@
 ﻿using GSqlQuery.Runner;
 using Microsoft.Data.SqlClient;
+using System.Collections.Generic;
+using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -32,12 +34,26 @@ namespace GSqlQuery.SQLServer
             cancellationToken.ThrowIfCancellationRequested();
             SqlServerDatabaseConnection sqlConnection = new SqlServerDatabaseConnection(_connectionString);
 
-            if (sqlConnection.State != System.Data.ConnectionState.Open)
+            if (sqlConnection.State != ConnectionState.Open)
             {
-                await sqlConnection.OpenAsync(cancellationToken);
+                await sqlConnection.OpenAsync(cancellationToken).ConfigureAwait(false);
             }
 
             return sqlConnection;
+        }
+        public override async Task<int> ExecuteNonQueryAsync(SqlServerDatabaseConnection connection, IQuery query, IEnumerable<IDataParameter> parameters, CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (Events.IsTraceActive)
+            {
+                Events.WriteTrace("ExecuteNonQueryAsync Query: {@Text} Parameters: {@parameters}", [query.Text, parameters]);
+            }
+
+            using (SqlCommand command = CreateCommand(connection, query, parameters))
+            {
+
+                return await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+            }
         }
     }
 }
