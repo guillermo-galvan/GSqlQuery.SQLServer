@@ -14,8 +14,22 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{14A9D2BF-721D-414A-909C-DB7A4AC7F45F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "es", "es", "{0ECB5A63-2F4F-462D-96FA-902C3E6B2453}"
+	ProjectSection(SolutionItems) = preProject
+		docs\es\Config.md = docs\es\Config.md
+		docs\es\DatabaseManagementEvents.md = docs\es\DatabaseManagementEvents.md
+		docs\es\EntityExecute.md = docs\es\EntityExecute.md
+		docs\es\SqlServerConnectionOptions.md = docs\es\SqlServerConnectionOptions.md
+		docs\es\SqlServerDatabaseManagement.md = docs\es\SqlServerDatabaseManagement.md
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "en", "en", "{35FDEE54-0629-4EDB-AC0C-FF7D826C8371}"
+	ProjectSection(SolutionItems) = preProject
+		docs\en\Config.md = docs\en\Config.md
+		docs\en\DatabaseManagementEvents.md = docs\en\DatabaseManagementEvents.md
+		docs\en\EntityExecute.md = docs\en\EntityExecute.md
+		docs\en\SqlServerConnectionOptions.md = docs\en\SqlServerConnectionOptions.md
+		docs\en\SqlServerDatabaseManagement.md = docs\en\SqlServerDatabaseManagement.md
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GSqlQuery.SQLServer.Test", "test\GSqlQuery.SQLServer.Test\GSqlQuery.SQLServer.Test.csproj", "{67AD4B6A-3EAC-47FB-896D-197588EF2D62}"
 EndProject

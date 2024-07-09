@@ -20,7 +20,7 @@ namespace GSqlQuery.SQLServer.Benchmark
 
         public override IEnumerable<IDataParameter> GetParameter<T>(IEnumerable<ParameterDetail> parameters)
         {
-            Queue<SqlParameter> mySqlParameters = new();
+            Queue<SqlParameter> sqlParameters = new();
             IGetParameterTypes<T> getParameters;
             try
             {
@@ -38,12 +38,12 @@ namespace GSqlQuery.SQLServer.Benchmark
 
             foreach (var param in parameters)
             {
-                SqlDbType mySqlDbType = getParameters.Types[param.PropertyOptions.PropertyInfo.Name];
+                SqlDbType sqlDbType = getParameters.Types[param.PropertyOptions.PropertyInfo.Name];
 
-                mySqlParameters.Enqueue(new SqlParameter(param.Name, mySqlDbType) { Value = param.Value });
+                sqlParameters.Enqueue(new SqlParameter(param.Name, sqlDbType) { Value = param.Value });
             }
 
-            return mySqlParameters;
+            return sqlParameters;
         }
 
         public override ITransformTo<T, TDbDataReader> GetTransformTo<T, TDbDataReader>(ClassOptions classOptions)
