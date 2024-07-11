@@ -3,15 +3,14 @@
   <PropertyGroup>
 	  <TargetFrameworks>netstandard2.0;netstandard2.1;net462;net6.0;net7.0;net8.0</TargetFrameworks>
 	<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-	<VersionPrefix>1.0.0-alpha</VersionPrefix>
 	<Description>Create queries from a class and add execution to Sql server database</Description>
-
+	  <PackageIcon>logo.png</PackageIcon>
+	  <PackageReadmeFile>README.md</PackageReadmeFile>
+	  
 	  <EnablePackageValidation>true</EnablePackageValidation>
 	  <PublishRepositoryUrl>true</PublishRepositoryUrl>
 	  <EmbedUntrackedSources>true</EmbedUntrackedSources>
-	  <PackageIcon>logo.png</PackageIcon>
-	  <PackageReadmeFile>README.md</PackageReadmeFile>
-	  <Version>$(VersionPrefix)</Version>
+
   </PropertyGroup>
 
   <ItemGroup>

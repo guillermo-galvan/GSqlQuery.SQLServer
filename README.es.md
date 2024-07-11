@@ -7,7 +7,7 @@ Una biblioteca para ejecutar las consultas generadas por [GSqlQuery](https://git
 GSqlQuery.SQLServer se puede instalar utilizando el administrador de [paquetes Nuget](https://www.nuget.org/packages/GSqlQuery.SQLServer) o la `dotnet` CLI
 
 ```shell
-dotnet add package GSqlQuery.SQLServer --version 1.0.0-beta
+dotnet add package GSqlQuery.SQLServer --version 1.0.0-beta.1
 ```
 
 [Revise nuestra documentación](./docs/es/Config.md) para obtener instrucciones sobre cómo utilizar el paquete.
