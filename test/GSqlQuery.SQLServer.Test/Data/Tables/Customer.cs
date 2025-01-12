@@ -4,7 +4,7 @@ namespace GSqlQuery.SQLServer.Test.Data.Tables
     public class Customer : EntityExecute<Customer>
     {
         [Column("customer_id", Size = 5, IsAutoIncrementing = true, IsPrimaryKey = true)]
-        public long CustomerId { get; set; }
+        public int CustomerId { get; set; }
 
         [Column("store_id", Size = 3)]
         public byte StoreId { get; set; }
@@ -19,10 +19,10 @@ namespace GSqlQuery.SQLServer.Test.Data.Tables
         public string Email { get; set; }
 
         [Column("address_id", Size = 5)]
-        public long AddressId { get; set; }
+        public int AddressId { get; set; }
 
         [Column("active", Size = 3)]
-        public byte Active { get; set; }
+        public short Active { get; set; }
 
         [Column("create_date", Size = 19)]
         public DateTime CreateDate { get; set; }
@@ -33,7 +33,7 @@ namespace GSqlQuery.SQLServer.Test.Data.Tables
         public Customer()
         { }
 
-        public Customer(long customerId, byte storeId, string firstName, string lastName, string email, long addressId, byte active, DateTime createDate, DateTime? lastUpdate)
+        public Customer(int customerId, byte storeId, string firstName, string lastName, string email, int addressId, short active, DateTime createDate, DateTime? lastUpdate)
         {
             CustomerId = customerId;
             StoreId = storeId;

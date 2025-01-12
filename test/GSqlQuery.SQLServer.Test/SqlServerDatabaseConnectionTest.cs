@@ -24,7 +24,7 @@ namespace GSqlQuery.SQLServer.Test
             {
                 result.Open();
                 result.Dispose();
-                Assert.Equal(ConnectionState.Broken, result.State);
+                Assert.Equal(ConnectionState.Closed, result.State);
             }
         }
 

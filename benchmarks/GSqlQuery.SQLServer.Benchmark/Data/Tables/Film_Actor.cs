@@ -6,10 +6,10 @@ namespace GSqlQuery.SQLServer.Benchmark.Data.Tables
     public class Film_Actor : EntityExecute<Film_Actor>
     {
         [Column("actor_id", Size = 5, IsPrimaryKey = true)]
-        public long ActorId { get; set; }
+        public int ActorId { get; set; }
 
         [Column("film_id", Size = 5, IsPrimaryKey = true)]
-        public long FilmId { get; set; }
+        public int FilmId { get; set; }
 
         [Column("last_update", Size = 19)]
         public DateTime LastUpdate { get; set; }
@@ -17,7 +17,7 @@ namespace GSqlQuery.SQLServer.Benchmark.Data.Tables
         public Film_Actor()
         { }
 
-        public Film_Actor(long actorId, long filmId, DateTime lastUpdate)
+        public Film_Actor(int actorId, int filmId, DateTime lastUpdate)
         {
             ActorId = actorId;
             FilmId = filmId;

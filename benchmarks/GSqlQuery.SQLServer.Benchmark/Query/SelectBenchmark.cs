@@ -12,7 +12,7 @@ namespace GSqlQuery.SQLServer.Benchmark.Query
         public SelectBenchmark()
         {
             Helper.CreateDataTable();
-            int count = Actor.Select(_connectionOptions, x => x.ActorId).Count().Build().Execute();
+            int count = Actor.Select(_connectionOptions, x => new { x.ActorId }).Count().Build().Execute();
             Console.WriteLine("Init Initialize {1} 2 {0}", count, typeof(Actor));
         }
     }

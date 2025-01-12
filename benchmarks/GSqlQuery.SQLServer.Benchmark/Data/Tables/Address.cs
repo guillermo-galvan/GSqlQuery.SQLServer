@@ -6,12 +6,12 @@ namespace GSqlQuery.SQLServer.Benchmark.Data.Tables
     [Table("address")]
     public class Address : EntityExecute<Address>
     {
-        [Column("address_id", Size = 5, IsAutoIncrementing = true,IsPrimaryKey = true)]
-        public long AddressId { get; set; }
+        [Column("address_id", Size = 5, IsAutoIncrementing = true, IsPrimaryKey = true)]
+        public int AddressId { get; set; }
 
         [Column("address", Size = 50)]
         public string Address1 { get; set; }
-        
+
         [Column("address2", Size = 50)]
         public string Address2 { get; set; }
 
@@ -19,7 +19,7 @@ namespace GSqlQuery.SQLServer.Benchmark.Data.Tables
         public string District { get; set; }
 
         [Column("city_id", Size = 5)]
-        public long CityId { get; set; }
+        public int CityId { get; set; }
 
         [Column("postal_code", Size = 10)]
         public string PostalCode { get; set; }
@@ -36,7 +36,7 @@ namespace GSqlQuery.SQLServer.Benchmark.Data.Tables
         public Address()
         { }
 
-        public Address(long addressId, string address1, string address2, string district, long cityId, string postalCode, string phone, SqlGeometry location, DateTime lastUpdate)
+        public Address(int addressId, string address1, string address2, string district, int cityId, string postalCode, string phone, SqlGeometry location, DateTime lastUpdate)
         {
             AddressId = addressId;
             Address1 = address1;

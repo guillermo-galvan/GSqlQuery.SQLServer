@@ -17,7 +17,7 @@ namespace GSqlQuery.SQLServer.Test.Extensions
         {
             var text = "SELECT [actor].[actor_id],[actor].[first_name],[actor].[last_name],[actor].[last_update] FROM [actor] ORDER BY [actor].[actor_id] ASC OFFSET 0 ROWS FETCH NEXT 5 ROWS ONLY;";
 
-            var result = Actor.Select(new QueryOptions(_connectionOptions.Formats)).OrderBy(x => x.ActorId, OrderBy.ASC).Limit(0, 5).Build();
+            var result = Actor.Select(new QueryOptions(_connectionOptions.Formats)).OrderBy(x => new { x.ActorId }, OrderBy.ASC).Limit(0, 5).Build();
             Assert.NotNull(result);
             Assert.Equal(text, result.Text);
         }
@@ -26,7 +26,7 @@ namespace GSqlQuery.SQLServer.Test.Extensions
         public void Limit_start_length_and_where()
         {
             var text = "SELECT [actor].[actor_id],[actor].[first_name],[actor].[last_name],[actor].[last_update] FROM [actor] WHERE [actor].[last_name] IS NOT NULL ORDER BY [actor].[actor_id] ASC OFFSET 0 ROWS FETCH NEXT 5 ROWS ONLY;";
-            var result = Actor.Select(new QueryOptions(_connectionOptions.Formats)).Where().IsNotNull(x => x.LastName).OrderBy(x => x.ActorId, OrderBy.ASC).Limit(0, 5).Build();
+            var result = Actor.Select(new QueryOptions(_connectionOptions.Formats)).Where().IsNotNull(x => x.LastName).OrderBy(x => new { x.ActorId }, OrderBy.ASC).Limit(0, 5).Build();
             Assert.NotNull(result);
             Assert.Equal(text, result.Text);
         }
@@ -36,7 +36,7 @@ namespace GSqlQuery.SQLServer.Test.Extensions
         {
             var text = "SELECT [actor].[actor_id],[actor].[first_name],[actor].[last_name],[actor].[last_update] FROM [actor] ORDER BY [actor].[actor_id] ASC OFFSET 0 ROWS;";
 
-            var result = Actor.Select(new QueryOptions(_connectionOptions.Formats)).OrderBy(x => x.ActorId, OrderBy.ASC).Limit(0).Build();
+            var result = Actor.Select(new QueryOptions(_connectionOptions.Formats)).OrderBy(x => new { x.ActorId }, OrderBy.ASC).Limit(0).Build();
             Assert.NotNull(result);
             Assert.Equal(text, result.Text);
         }
@@ -45,7 +45,7 @@ namespace GSqlQuery.SQLServer.Test.Extensions
         public void Limit_start_and_where()
         {
             var text = "SELECT [actor].[actor_id],[actor].[first_name],[actor].[last_name],[actor].[last_update] FROM [actor] WHERE [actor].[last_name] IS NOT NULL ORDER BY [actor].[actor_id] ASC OFFSET 0 ROWS;";
-            var result = Actor.Select(new QueryOptions(_connectionOptions.Formats)).Where().IsNotNull(x => x.LastName).OrderBy(x => x.ActorId, OrderBy.ASC).Limit(0).Build();
+            var result = Actor.Select(new QueryOptions(_connectionOptions.Formats)).Where().IsNotNull(x => x.LastName).OrderBy(x => new { x.ActorId }, OrderBy.ASC).Limit(0).Build();
             Assert.NotNull(result);
             Assert.Equal(text, result.Text);
         }
@@ -53,7 +53,7 @@ namespace GSqlQuery.SQLServer.Test.Extensions
         [Fact]
         public void Limit_start_length_Execute()
         {
-            var result = Address.Select(_connectionOptions).OrderBy(x => x.AddressId, OrderBy.ASC).Limit(0, 5).Build().Execute();
+            var result = Address.Select(_connectionOptions).OrderBy(x => new { x.AddressId }, OrderBy.ASC).Limit(0, 5).Build().Execute();
             Assert.NotNull(result);
             Assert.Equal(5, result.Count());
         }
@@ -61,9 +61,9 @@ namespace GSqlQuery.SQLServer.Test.Extensions
         [Fact]
         public void Limit_start_Execute()
         {
-            var result = Address.Select(_connectionOptions).OrderBy(x => x.AddressId, OrderBy.ASC).Limit(0).Build().Execute();
+            var result = Address.Select(_connectionOptions).OrderBy(x => new { x.AddressId }, OrderBy.ASC).Limit(0).Build().Execute();
             Assert.NotNull(result);
-            Assert.True( result.Count() > 0);
+            Assert.True(result.Count() > 0);
         }
 
         [Fact]
@@ -71,7 +71,7 @@ namespace GSqlQuery.SQLServer.Test.Extensions
         {
             using (var connection = _connectionOptions.DatabaseManagement.GetConnection())
             {
-                var result = Address.Select(_connectionOptions).OrderBy(x => x.AddressId, OrderBy.ASC).Limit(0, 5).Build().Execute(connection);
+                var result = Address.Select(_connectionOptions).OrderBy(x => new { x.AddressId }, OrderBy.ASC).Limit(0, 5).Build().Execute(connection);
                 Assert.NotNull(result);
                 Assert.Equal(5, result.Count());
             }
@@ -82,7 +82,7 @@ namespace GSqlQuery.SQLServer.Test.Extensions
         {
             using (var connection = _connectionOptions.DatabaseManagement.GetConnection())
             {
-                var result = Address.Select(_connectionOptions).OrderBy(x => x.AddressId, OrderBy.ASC).Limit(0).Build().Execute(connection);
+                var result = Address.Select(_connectionOptions).OrderBy(x => new { x.AddressId }, OrderBy.ASC).Limit(0).Build().Execute(connection);
                 Assert.NotNull(result);
                 Assert.True(result.Count() > 0);
             }
@@ -93,14 +93,14 @@ namespace GSqlQuery.SQLServer.Test.Extensions
         {
             using (var connection = _connectionOptions.DatabaseManagement.GetConnection())
             {
-                Assert.Throws<ArgumentNullException>(() => Address.Select(_connectionOptions).OrderBy(x => x.AddressId, OrderBy.ASC).Limit(0, 5).Build().Execute(null));
+                Assert.Throws<ArgumentNullException>(() => Address.Select(_connectionOptions).OrderBy(x => new { x.AddressId }, OrderBy.ASC).Limit(0, 5).Build().Execute(null));
             }
         }
 
         [Fact]
         public async Task Limit_start_length_ExecuteAsync()
         {
-            var result = await Address.Select(_connectionOptions).OrderBy(x => x.AddressId, OrderBy.ASC).Limit(0, 5).Build().ExecuteAsync();
+            var result = await Address.Select(_connectionOptions).OrderBy(x => new { x.AddressId }, OrderBy.ASC).Limit(0, 5).Build().ExecuteAsync();
             Assert.NotNull(result);
             Assert.Equal(5, result.Count());
         }
@@ -108,7 +108,7 @@ namespace GSqlQuery.SQLServer.Test.Extensions
         [Fact]
         public async Task Limit_start_ExecuteAsync()
         {
-            var result = await Address.Select(_connectionOptions).OrderBy(x => x.AddressId, OrderBy.ASC).Limit(0).Build().ExecuteAsync();
+            var result = await Address.Select(_connectionOptions).OrderBy(x => new { x.AddressId }, OrderBy.ASC).Limit(0).Build().ExecuteAsync();
             Assert.NotNull(result);
             Assert.True(result.Count() > 0);
         }
@@ -118,7 +118,7 @@ namespace GSqlQuery.SQLServer.Test.Extensions
         {
             CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
             CancellationToken token = cancellationTokenSource.Token;
-            var result = await Address.Select(_connectionOptions).OrderBy(x => x.AddressId, OrderBy.ASC).Limit(0, 5).Build().ExecuteAsync(token);
+            var result = await Address.Select(_connectionOptions).OrderBy(x => new { x.AddressId }, OrderBy.ASC).Limit(0, 5).Build().ExecuteAsync(token);
             Assert.NotNull(result);
             Assert.Equal(5, result.Count());
         }
@@ -128,7 +128,7 @@ namespace GSqlQuery.SQLServer.Test.Extensions
         {
             CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
             CancellationToken token = cancellationTokenSource.Token;
-            var result = await Address.Select(_connectionOptions).OrderBy(x => x.AddressId, OrderBy.ASC).Limit(0).Build().ExecuteAsync(token);
+            var result = await Address.Select(_connectionOptions).OrderBy(x => new { x.AddressId }, OrderBy.ASC).Limit(0).Build().ExecuteAsync(token);
             Assert.NotNull(result);
             Assert.True(result.Count() > 0);
         }
@@ -139,7 +139,7 @@ namespace GSqlQuery.SQLServer.Test.Extensions
             CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
             CancellationToken token = cancellationTokenSource.Token;
             cancellationTokenSource.Cancel();
-            await Assert.ThrowsAsync<OperationCanceledException>(async () => await Actor.Select(_connectionOptions).OrderBy(x => x.ActorId, OrderBy.ASC).Limit(0, 5).Build().ExecuteAsync(token));
+            await Assert.ThrowsAsync<OperationCanceledException>(async () => await Actor.Select(_connectionOptions).OrderBy(x => new { x.ActorId }, OrderBy.ASC).Limit(0, 5).Build().ExecuteAsync(token));
         }
 
         [Fact]
@@ -147,7 +147,7 @@ namespace GSqlQuery.SQLServer.Test.Extensions
         {
             using (var connection = await _connectionOptions.DatabaseManagement.GetConnectionAsync())
             {
-                var result = await Address.Select(_connectionOptions).OrderBy(x => x.AddressId, OrderBy.ASC).Limit(0, 5).Build().ExecuteAsync(connection);
+                var result = await Address.Select(_connectionOptions).OrderBy(x => new { x.AddressId }, OrderBy.ASC).Limit(0, 5).Build().ExecuteAsync(connection);
                 Assert.NotNull(result);
                 Assert.Equal(5, result.Count());
             }
@@ -158,7 +158,7 @@ namespace GSqlQuery.SQLServer.Test.Extensions
         {
             using (var connection = await _connectionOptions.DatabaseManagement.GetConnectionAsync())
             {
-                var result = await Address.Select(_connectionOptions).OrderBy(x => x.AddressId, OrderBy.ASC).Limit(0).Build().ExecuteAsync(connection);
+                var result = await Address.Select(_connectionOptions).OrderBy(x => new { x.AddressId }, OrderBy.ASC).Limit(0).Build().ExecuteAsync(connection);
                 Assert.NotNull(result);
                 Assert.True(result.Count() > 0);
             }
@@ -167,7 +167,7 @@ namespace GSqlQuery.SQLServer.Test.Extensions
         [Fact]
         public async Task Throw_exeception_when_connection_is_null_executeasync()
         {
-            await Assert.ThrowsAsync<ArgumentNullException>(async () => await Actor.Select(_connectionOptions).OrderBy(x => x.ActorId, OrderBy.ASC).Limit(0, 5).Build().ExecuteAsync(null));
+            await Assert.ThrowsAsync<ArgumentNullException>(async () => await Actor.Select(_connectionOptions).OrderBy(x => new { x.ActorId }, OrderBy.ASC).Limit(0, 5).Build().ExecuteAsync(null));
         }
 
         [Fact]
@@ -177,7 +177,7 @@ namespace GSqlQuery.SQLServer.Test.Extensions
             CancellationToken token = cancellationTokenSource.Token;
             using (var connection = await _connectionOptions.DatabaseManagement.GetConnectionAsync())
             {
-                var result = await Address.Select(_connectionOptions).OrderBy(x => x.AddressId, OrderBy.ASC).Limit(0, 5).Build().ExecuteAsync(connection, token);
+                var result = await Address.Select(_connectionOptions).OrderBy(x => new { x.AddressId }, OrderBy.ASC).Limit(0, 5).Build().ExecuteAsync(connection, token);
                 Assert.NotNull(result);
                 Assert.Equal(5, result.Count());
             }
@@ -190,7 +190,7 @@ namespace GSqlQuery.SQLServer.Test.Extensions
             {
                 CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
                 CancellationToken token = cancellationTokenSource.Token;
-                var result = await Address.Select(_connectionOptions).OrderBy(x => x.AddressId, OrderBy.ASC).Limit(0).Build().ExecuteAsync(connection, token);
+                var result = await Address.Select(_connectionOptions).OrderBy(x => new { x.AddressId }, OrderBy.ASC).Limit(0).Build().ExecuteAsync(connection, token);
                 Assert.NotNull(result);
                 Assert.True(result.Count() > 0);
             }
@@ -205,8 +205,8 @@ namespace GSqlQuery.SQLServer.Test.Extensions
             using (var connection = await _connectionOptions.DatabaseManagement.GetConnectionAsync())
             {
                 cancellationTokenSource.Cancel();
-                await Assert.ThrowsAsync<OperationCanceledException>(async () => await Actor.Select(_connectionOptions).OrderBy(x => x.ActorId, OrderBy.ASC).Limit(0, 5).Build().ExecuteAsync(connection, token));
-                await Assert.ThrowsAsync<ArgumentNullException>(async () => await Actor.Select(_connectionOptions).OrderBy(x => x.ActorId, OrderBy.ASC).Limit(0, 5).Build().ExecuteAsync(null, token));
+                await Assert.ThrowsAsync<OperationCanceledException>(async () => await Actor.Select(_connectionOptions).OrderBy(x => new { x.ActorId }, OrderBy.ASC).Limit(0, 5).Build().ExecuteAsync(connection, token));
+                await Assert.ThrowsAsync<ArgumentNullException>(async () => await Actor.Select(_connectionOptions).OrderBy(x => new { x.ActorId }, OrderBy.ASC).Limit(0, 5).Build().ExecuteAsync(null, token));
             }
         }
 

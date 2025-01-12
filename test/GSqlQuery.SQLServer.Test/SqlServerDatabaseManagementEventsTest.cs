@@ -1,4 +1,5 @@
 ﻿using GSqlQuery.SQLServer.Test.Data.Tables;
+using Microsoft.Data.SqlClient;
 
 namespace GSqlQuery.SQLServer.Test
 {
@@ -12,47 +13,19 @@ namespace GSqlQuery.SQLServer.Test
         }
 
         [Fact]
-        public void GetParameter()
+        public void GetTransformTo_ReturnsNotNull_ForAddressType()
         {
-            var query = Address.Select(_connectionOptions).Build();
-
-            Queue<ParameterDetail> parameters = new Queue<ParameterDetail>();
-            if (query.Criteria != null)
-            {
-                foreach (var item in query.Criteria.Where(x => x.ParameterDetails != null))
-                {
-                    foreach (var item2 in item.ParameterDetails)
-                    {
-                        parameters.Enqueue(item2);
-                    }
-                }
-            }
-
-            var result = _connectionOptions.DatabaseManagement.Events.GetParameter<Address>(parameters);
+            var classOptions = ClassOptionsFactory.GetClassOptions(typeof(Address));
+            var result = _connectionOptions.DatabaseManagement.Events.GetTransformTo<Address, SqlDataReader>(classOptions);
             Assert.NotNull(result);
-            Assert.Equal(parameters.Count, result.Count());
         }
 
         [Fact]
-        public void OnGetParameter()
+        public void GetTransformTo_ReturnsNotNull_ForFilmType()
         {
-            var query = Film.Select(_connectionOptions).Build();
-
-            Queue<ParameterDetail> parameters = new Queue<ParameterDetail>();
-            if (query.Criteria != null)
-            {
-                foreach (var item in query.Criteria.Where(x => x.ParameterDetails != null))
-                {
-                    foreach (var item2 in item.ParameterDetails)
-                    {
-                        parameters.Enqueue(item2);
-                    }
-                }
-            }
-
-            var result = _connectionOptions.DatabaseManagement.Events.GetParameter<Film>(parameters);
+            var classOptions = ClassOptionsFactory.GetClassOptions(typeof(Film));
+            var result = _connectionOptions.DatabaseManagement.Events.GetTransformTo<Film, SqlDataReader>(classOptions);
             Assert.NotNull(result);
-            Assert.Empty(result);
         }
     }
 }

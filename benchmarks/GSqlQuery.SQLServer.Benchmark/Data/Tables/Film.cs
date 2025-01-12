@@ -6,7 +6,7 @@ namespace GSqlQuery.SQLServer.Benchmark.Data.Tables
     public class Film : EntityExecute<Film>
     {
         [Column("film_id", Size = 5, IsPrimaryKey = true, IsAutoIncrementing = true)]
-        public long FilmId { get; set; }
+        public int FilmId { get; set; }
 
         [Column("title", Size = 255)]
         public string Title { get; set; }
@@ -15,7 +15,7 @@ namespace GSqlQuery.SQLServer.Benchmark.Data.Tables
         public string Description { get; set; }
 
         [Column("release_year", Size = 0)]
-        public string ReleaseYear { get; set; }
+        public short? ReleaseYear { get; set; }
 
         [Column("language_id", Size = 3)]
         public byte LanguageId { get; set; }
@@ -30,7 +30,7 @@ namespace GSqlQuery.SQLServer.Benchmark.Data.Tables
         public decimal RentalRate { get; set; }
 
         [Column("length", Size = 5)]
-        public long? Length { get; set; }
+        public int? Length { get; set; }
 
         [Column("replacement_cost", Size = 5)]
         public decimal ReplacementCost { get; set; }
@@ -47,7 +47,7 @@ namespace GSqlQuery.SQLServer.Benchmark.Data.Tables
         public Film()
         { }
 
-        public Film(long filmId, string title, string description, string releaseYear, byte languageId, byte? originalLanguageId, byte rentalDuration, decimal rentalRate, long? length, decimal replacementCost, string rating, string specialFeatures, DateTime lastUpdate)
+        public Film(int filmId, string title, string description, short? releaseYear, byte languageId, byte? originalLanguageId, byte rentalDuration, decimal rentalRate, int? length, decimal replacementCost, string rating, string specialFeatures, DateTime lastUpdate)
         {
             FilmId = filmId;
             Title = title;

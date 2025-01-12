@@ -1,15 +1,20 @@
-﻿using Microsoft.Data.SqlClient;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
+﻿using GSqlQuery.Runner;
+using GSqlQuery.Runner.TypeHandles;
+using Microsoft.Data.SqlClient;
+using System;
 
 namespace GSqlQuery.SQLServer
 {
     public class SqlServerDatabaseManagementEvents : DatabaseManagementEvents
     {
-        public override IEnumerable<IDataParameter> GetParameter<T>(IEnumerable<ParameterDetail> parameters)
+        public static readonly TypeHandleCollection<SqlDataReader> TypeHandleCollection = TypeHandleCollection<SqlDataReader>.Instance;
+
+        public SqlServerDatabaseManagementEvents()
+        {}
+
+        protected override ITypeHandler<TDbDataReader> GetTypeHandler<TDbDataReader>(Type property)
         {
-            return parameters.Select(x => new SqlParameter(x.Name, x.Value));
+            return (ITypeHandler<TDbDataReader>)TypeHandleCollection.GetTypeHandler(property);
         }
     }
 }

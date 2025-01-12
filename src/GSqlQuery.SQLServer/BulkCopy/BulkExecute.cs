@@ -10,7 +10,7 @@ namespace GSqlQuery.SQLServer
 {
     internal class BulkExecute : ISqlBulkCopyExecute
     {
-        private readonly Queue<DataTable> _tables;
+        private readonly List<DataTable> _tables;
         private readonly string _connectionString;
 
         public BulkExecute(string connectionString)
@@ -21,7 +21,7 @@ namespace GSqlQuery.SQLServer
             }
 
             _connectionString = connectionString;
-            _tables = new Queue<DataTable>();
+            _tables = new List<DataTable>();
         }
 
         public int Execute()
@@ -78,7 +78,7 @@ namespace GSqlQuery.SQLServer
 
         public ISqlBulkCopyExecute Copy<T>(IEnumerable<T> values)
         {
-            _tables.Enqueue(BatchExtension.FillTable(values));
+            _tables.Add(BatchExtension.FillTable(values));
             return this;
         }
 

@@ -1,42 +1,26 @@
 ﻿using GSqlQuery.Runner;
 using GSqlQuery.SQLServer.Test.Data.Tables;
 using GSqlQuery.SQLServer.Test.Transform;
-using Microsoft.Data.SqlClient;
-using System.Data;
+using GSqlQuery.SQLServer.Test.TypeHandles;
+using Microsoft.SqlServer.Types;
 
 namespace GSqlQuery.SQLServer.Test
 {
     public class SqlServerDatabaseManagementEventsCustom : SqlServerDatabaseManagementEvents
     {
-        private SqlParameter GetAddressParam(ParameterDetail parameterDetail)
+        public SqlServerDatabaseManagementEventsCustom()
         {
-            if (parameterDetail.PropertyOptions.PropertyInfo.Name == nameof(Address.Location))
+            if (!TypeHandleCollection.ContainsKey(typeof(SqlGeometry)))
             {
-                return new SqlParameter(parameterDetail.Name, parameterDetail.Value)
-                {
-                    SqlDbType = SqlDbType.Udt,
-                    UdtTypeName = "geometry"
-                };
+                TypeHandleCollection.Add(typeof(SqlGeometry), new MySqlGeometryNullableTypeHandler());
             }
-
-            return new SqlParameter(parameterDetail.Name, parameterDetail.Value);
-        }
-
-        public override IEnumerable<IDataParameter> GetParameter<T>(IEnumerable<ParameterDetail> parameters)
-        {
-            if (typeof(T) == typeof(Address))
-            {
-                return parameters.Select(GetAddressParam);
-            }
-
-            return parameters.Select(x => new SqlParameter(x.Name, x.Value));
         }
 
         public override ITransformTo<T, TDbDataReader> GetTransformTo<T, TDbDataReader>(ClassOptions classOptions)
         {
             if (typeof(T) == typeof(Address))
             {
-                return (ITransformTo<T, TDbDataReader>)new AddressTransform(classOptions.PropertyOptions.Count());
+                return (ITransformTo<T, TDbDataReader>)new AddressTransform();
             }
 
             return base.GetTransformTo<T, TDbDataReader>(classOptions);
