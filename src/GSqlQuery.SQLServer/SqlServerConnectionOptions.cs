@@ -1,19 +1,14 @@
-﻿using GSqlQuery.Runner;
-
-namespace GSqlQuery.SQLServer
+﻿namespace GSqlQuery.SQLServer
 {
     public class SqlServerConnectionOptions : ConnectionOptions<SqlServerDatabaseConnection>
     {
-        public SqlServerConnectionOptions(string connectionString) : base(new SqlServerStatements(),
-            new SqlServerDatabaseManagement(connectionString))
+        public SqlServerConnectionOptions(string connectionString) : base(new SqlServerFormats(), new SqlServerDatabaseManagement(connectionString))
         { }
 
-        public SqlServerConnectionOptions(string connectionString, DatabaseManagementEvents events) :
-            base(new SqlServerStatements(), new SqlServerDatabaseManagement(connectionString, events))
+        public SqlServerConnectionOptions(string connectionString, SqlServerDatabaseManagementEvents events) : base(new SqlServerFormats(), new SqlServerDatabaseManagement(connectionString, events))
         { }
 
-        public SqlServerConnectionOptions(IStatements statements, SqlServerDatabaseManagement sqlServerDatabaseManagement) :
-            base(statements, sqlServerDatabaseManagement)
+        public SqlServerConnectionOptions(IFormats formats, SqlServerDatabaseManagement sqlServerDatabaseManagement) : base(formats, sqlServerDatabaseManagement)
         {
 
         }

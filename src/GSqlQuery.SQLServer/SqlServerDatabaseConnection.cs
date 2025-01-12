@@ -6,59 +6,41 @@ using System.Threading.Tasks;
 
 namespace GSqlQuery.SQLServer
 {
-    public sealed class SqlServerDatabaseConnection : Connection, IConnection
+    public sealed class SqlServerDatabaseConnection(string connectionString) : 
+        Connection<SqlServerDatabaseTransaction, SqlConnection, SqlTransaction, SqlCommand>(new SqlConnection(connectionString)), 
+        IConnection<SqlServerDatabaseTransaction, SqlCommand>
     {
-        public SqlServerDatabaseConnection(string connectionString) : base(new SqlConnection(connectionString))
-        { }
-
-        public SqlServerDatabaseTransaction BeginTransaction()
+        public override Task CloseAsync(CancellationToken cancellationToken = default)
         {
-            return (SqlServerDatabaseTransaction)SetTransaction(new SqlServerDatabaseTransaction(this, ((SqlConnection)_connection).BeginTransaction()));
-        }
-
-        public SqlServerDatabaseTransaction BeginTransaction(IsolationLevel isolationLevel)
-        {
-            return (SqlServerDatabaseTransaction)SetTransaction(new SqlServerDatabaseTransaction(this, ((SqlConnection)_connection).BeginTransaction(isolationLevel)));
-        }
-
-
 #if NET5_0_OR_GREATER
-        public async Task<SqlServerDatabaseTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default)
-        {
             cancellationToken.ThrowIfCancellationRequested();
-            return (SqlServerDatabaseTransaction)SetTransaction(new SqlServerDatabaseTransaction(this, await ((SqlConnection)_connection).BeginTransactionAsync(cancellationToken)));
-        }
+            return _connection.CloseAsync();
 #else
-        public Task<SqlServerDatabaseTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            return Task.FromResult((SqlServerDatabaseTransaction)SetTransaction(new SqlServerDatabaseTransaction(this, ((SqlConnection)_connection).BeginTransaction())));
-        }
+            return base.CloseAsync(cancellationToken);
 #endif
+        }
 
-#if NET5_0_OR_GREATER
-        public async Task<SqlServerDatabaseTransaction> BeginTransactionAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken = default)
+        public override SqlServerDatabaseTransaction BeginTransaction()
+        {
+            return SetTransaction(new SqlServerDatabaseTransaction(this, _connection.BeginTransaction()));
+        }
+
+        public override SqlServerDatabaseTransaction BeginTransaction(IsolationLevel isolationLevel)
+        {
+            return SetTransaction(new SqlServerDatabaseTransaction(this, _connection.BeginTransaction(isolationLevel)));
+        }
+
+        public override Task<SqlServerDatabaseTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            return
-                (SqlServerDatabaseTransaction)SetTransaction(new SqlServerDatabaseTransaction(this,
-                await ((SqlConnection)_connection).BeginTransactionAsync(isolationLevel, cancellationToken)));
+            return Task.FromResult(SetTransaction(new SqlServerDatabaseTransaction(this, _connection.BeginTransaction())));
         }
-#else
-        public Task<SqlServerDatabaseTransaction> BeginTransactionAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken = default)
+
+        public override Task<SqlServerDatabaseTransaction> BeginTransactionAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            return Task.FromResult((SqlServerDatabaseTransaction)SetTransaction(new SqlServerDatabaseTransaction(this, ((SqlConnection)_connection).BeginTransaction())));
+            return Task.FromResult(SetTransaction(new SqlServerDatabaseTransaction(this, _connection.BeginTransaction(isolationLevel))));
         }
-#endif
-        ITransaction IConnection.BeginTransaction() => BeginTransaction();
-
-        ITransaction IConnection.BeginTransaction(IsolationLevel isolationLevel) => BeginTransaction(isolationLevel);
-
-        async Task<ITransaction> IConnection.BeginTransactionAsync(CancellationToken cancellationToken = default) => await BeginTransactionAsync(cancellationToken);
-
-        async Task<ITransaction> IConnection.BeginTransactionAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken = default) =>
-            await BeginTransactionAsync(isolationLevel, cancellationToken);
 
         ~SqlServerDatabaseConnection()
         {

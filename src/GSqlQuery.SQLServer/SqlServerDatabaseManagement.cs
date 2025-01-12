@@ -1,88 +1,57 @@
 ﻿using GSqlQuery.Runner;
-using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
+using Microsoft.Data.SqlClient;
 using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace GSqlQuery.SQLServer
 {
-    public sealed class SqlServerDatabaseManagement : DatabaseManagement, IDatabaseManagement<SqlServerDatabaseConnection>
+    public sealed class SqlServerDatabaseManagement : DatabaseManagement<SqlServerDatabaseConnection, SqlServerDatabaseTransaction, SqlCommand, SqlTransaction, SqlDataReader>, IDatabaseManagement<SqlServerDatabaseConnection>
     {
         public SqlServerDatabaseManagement(string connectionString) :
             base(connectionString, new SqlServerDatabaseManagementEvents())
         { }
 
-        public SqlServerDatabaseManagement(string connectionString, DatabaseManagementEvents events) : base(connectionString, events)
+        public SqlServerDatabaseManagement(string connectionString, SqlServerDatabaseManagementEvents events) : base(connectionString, events)
         { }
 
-        public SqlServerDatabaseManagement(string connectionString, DatabaseManagementEvents events, ILogger logger) : base(connectionString, events, logger)
-        { }
-
-        public int ExecuteNonQuery(SqlServerDatabaseConnection connection, IQuery query, IEnumerable<IDataParameter> parameters)
+        public override SqlServerDatabaseConnection GetConnection()
         {
-            return base.ExecuteNonQuery(connection, query, parameters);
-        }
+            SqlServerDatabaseConnection sqlConnection = new SqlServerDatabaseConnection(_connectionString);
 
-        public Task<int> ExecuteNonQueryAsync(SqlServerDatabaseConnection connection, IQuery query, IEnumerable<IDataParameter> parameters, CancellationToken cancellationToken = default)
-        {
-            return base.ExecuteNonQueryAsync(connection, query, parameters, cancellationToken);
-        }
-
-        public IEnumerable<T> ExecuteReader<T>(SqlServerDatabaseConnection connection, IQuery<T> query, IEnumerable<PropertyOptions> propertyOptions, IEnumerable<IDataParameter> parameters) 
-            where T : class, new()
-        {
-            return base.ExecuteReader<T>(connection, query, propertyOptions, parameters);
-        }
-
-        public Task<IEnumerable<T>> ExecuteReaderAsync<T>(SqlServerDatabaseConnection connection, IQuery<T> query, IEnumerable<PropertyOptions> propertyOptions, IEnumerable<IDataParameter> parameters, CancellationToken cancellationToken = default) 
-            where T : class, new()
-        {
-            return base.ExecuteReaderAsync<T>(connection, query, propertyOptions, parameters, cancellationToken);
-        }
-
-        public T ExecuteScalar<T>(SqlServerDatabaseConnection connection, IQuery query, IEnumerable<IDataParameter> parameters)
-        {
-            return base.ExecuteScalar<T>(connection, query, parameters);
-        }
-
-        public Task<T> ExecuteScalarAsync<T>(SqlServerDatabaseConnection connection, IQuery query, IEnumerable<IDataParameter> parameters, CancellationToken cancellationToken = default)
-        {
-            return base.ExecuteScalarAsync<T>(connection, query, parameters, cancellationToken);
-        }
-
-        public override IConnection GetConnection()
-        {
-            SqlServerDatabaseConnection databaseConnection = new SqlServerDatabaseConnection(_connectionString);
-
-            if (databaseConnection.State != ConnectionState.Open)
+            if (sqlConnection.State != ConnectionState.Open)
             {
-                databaseConnection.Open();
+                sqlConnection.Open();
             }
 
-            return databaseConnection;
+            return sqlConnection;
         }
 
-        SqlServerDatabaseConnection IDatabaseManagement<SqlServerDatabaseConnection>.GetConnection()
+        public override async Task<SqlServerDatabaseConnection> GetConnectionAsync(CancellationToken cancellationToken = default)
         {
-            return (SqlServerDatabaseConnection)GetConnection();
-        }
+            cancellationToken.ThrowIfCancellationRequested();
+            SqlServerDatabaseConnection sqlConnection = new SqlServerDatabaseConnection(_connectionString);
 
-        public async override Task<IConnection> GetConnectionAsync(CancellationToken cancellationToken = default)
-        {
-            SqlServerDatabaseConnection databaseConnection = new SqlServerDatabaseConnection(_connectionString);
-
-            if (databaseConnection.State != ConnectionState.Open)
+            if (sqlConnection.State != ConnectionState.Open)
             {
-                await databaseConnection.OpenAsync(cancellationToken);
+                await sqlConnection.OpenAsync(cancellationToken).ConfigureAwait(false);
             }
 
-            return databaseConnection;
+            return sqlConnection;
         }
-
-        async Task<SqlServerDatabaseConnection> IDatabaseManagement<SqlServerDatabaseConnection>.GetConnectionAsync(CancellationToken cancellationToken)
+        public override async Task<int> ExecuteNonQueryAsync(SqlServerDatabaseConnection connection, IQuery query, CancellationToken cancellationToken = default)
         {
-            return (SqlServerDatabaseConnection)await GetConnectionAsync(cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
+
+            using (SqlCommand command = CreateCommand(connection, query))
+            {
+                if (Events.IsTraceActive)
+                {
+                    Events.WriteTrace("ExecuteNonQueryAsync Query: {@Text} Parameters: {@parameters}", [query.Text, command.Parameters]);
+                }
+
+                return await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+            }
         }
     }
 }
