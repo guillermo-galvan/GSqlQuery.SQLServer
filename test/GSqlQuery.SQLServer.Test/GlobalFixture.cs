@@ -10,7 +10,6 @@ namespace GSqlQuery.SQLServer.Test
     {
         public const string CONNECTIONSTRING = "Server=127.0.0.1,9000;Database=sakila;User Id=sa;Password=sadmin@!123;TrustServerCertificate=True";
 
-
         private readonly MsSqlContainer _msSqlContainer = new MsSqlBuilder()
             .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
             .WithPortBinding(9000, 1433)
