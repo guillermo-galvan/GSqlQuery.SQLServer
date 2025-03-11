@@ -4,14 +4,14 @@ using Microsoft.SqlServer.Types;
 
 namespace GSqlQuery.SQLServer.Test
 {
+    [Collection("GlobalTestServer")]
     public class SqlServerDatabaseManagementTest
     {
         private readonly SqlServerConnectionOptions _connectionOptions;
 
         public SqlServerDatabaseManagementTest()
         {
-           Helper.CreateDataTable();
-            _connectionOptions = new SqlServerConnectionOptions(Helper.GetConnectionString(), new SqlServerDatabaseManagementEventsCustom());
+            _connectionOptions = new SqlServerConnectionOptions(GlobalFixture.CONNECTIONSTRING, new SqlServerDatabaseManagementEventsCustom());
         }
 
         [Fact]
@@ -20,7 +20,7 @@ namespace GSqlQuery.SQLServer.Test
             Actor actor = new Actor(1, "PENELOPE", "PENELOPE", DateTime.Now);
 
             var query = actor.Update(_connectionOptions, x => new { x.LastUpdate, x.LastName }).Where().Equal(x => x.ActorId, actor.ActorId).Build();
-            var managment = new SqlServerDatabaseManagement(Helper.GetConnectionString());
+            var managment = new SqlServerDatabaseManagement(GlobalFixture.CONNECTIONSTRING);
             int result = managment.ExecuteNonQuery(query);
             Assert.True(result > 0);
         }
@@ -34,7 +34,7 @@ namespace GSqlQuery.SQLServer.Test
                                .Equal(x => x.AddressId, 1)
                                .Build();
 
-            var managment = new SqlServerDatabaseManagement(Helper.GetConnectionString());
+            var managment = new SqlServerDatabaseManagement(GlobalFixture.CONNECTIONSTRING);
             using (var connection = _connectionOptions.DatabaseManagement.GetConnection())
             {
                 int result = managment.ExecuteNonQuery(connection, query);
@@ -48,7 +48,7 @@ namespace GSqlQuery.SQLServer.Test
             Address address = new Address(1, "47 MySakila Drive", null, "Alberta", 300, string.Empty, string.Empty, SqlGeometry.Point(153.1408538, -27.6333361, 0), DateTime.Now);
 
             var query = address.Update(_connectionOptions, x => new { x.Location, x.LastUpdate }).Where().Equal(x => x.AddressId, 3).Build();
-            var managment = new SqlServerDatabaseManagement(Helper.GetConnectionString());
+            var managment = new SqlServerDatabaseManagement(GlobalFixture.CONNECTIONSTRING);
             using (SqlServerDatabaseConnection connection = _connectionOptions.DatabaseManagement.GetConnection())
             {
                 int result = managment.ExecuteNonQuery(connection, query);
@@ -60,7 +60,7 @@ namespace GSqlQuery.SQLServer.Test
         public async Task ExecuteNonQueryAsync()
         {
             var query = Actor.Update(_connectionOptions, x => x.LastUpdate, DateTime.Now).Where().Equal(x => x.ActorId, 2).Build();
-            var managment = new SqlServerDatabaseManagement(Helper.GetConnectionString());
+            var managment = new SqlServerDatabaseManagement(GlobalFixture.CONNECTIONSTRING);
             int result = await managment.ExecuteNonQueryAsync(query);
             Assert.True(result > 0);
         }
@@ -73,7 +73,7 @@ namespace GSqlQuery.SQLServer.Test
             Address address = new Address(1, "47 MySakila Drive", null, "Alberta", 300, string.Empty, string.Empty, SqlGeometry.Point(153.1408538, -27.6333361, 0), DateTime.Now);
 
             var query = address.Update(_connectionOptions, x => new { x.Location, x.LastUpdate }).Where().Equal(x => x.AddressId, 1).Build();
-            var managment = new SqlServerDatabaseManagement(Helper.GetConnectionString());
+            var managment = new SqlServerDatabaseManagement(GlobalFixture.CONNECTIONSTRING);
             int result = await managment.ExecuteNonQueryAsync(query, token);
             Assert.True(result > 0);
         }
@@ -85,7 +85,7 @@ namespace GSqlQuery.SQLServer.Test
             CancellationToken token = source.Token;
 
             var query = Actor.Update(_connectionOptions, x => x.LastUpdate, DateTime.Now).Where().Equal(x => x.ActorId, 2).Build();
-            var managment = new SqlServerDatabaseManagement(Helper.GetConnectionString());
+            var managment = new SqlServerDatabaseManagement(GlobalFixture.CONNECTIONSTRING);
             source.Cancel();
             await Assert.ThrowsAsync<OperationCanceledException>(async () =>
             await managment.ExecuteNonQueryAsync(query, token));
@@ -99,7 +99,7 @@ namespace GSqlQuery.SQLServer.Test
                              .Where()
                              .Equal(x => x.AddressId, 1)
                              .Build();
-            var managment = new SqlServerDatabaseManagement(Helper.GetConnectionString());
+            var managment = new SqlServerDatabaseManagement(GlobalFixture.CONNECTIONSTRING);
             using (var connection = await _connectionOptions.DatabaseManagement.GetConnectionAsync())
             {
                 int result = await managment.ExecuteNonQueryAsync(connection, query);
@@ -113,7 +113,7 @@ namespace GSqlQuery.SQLServer.Test
             CancellationTokenSource source = new CancellationTokenSource();
             CancellationToken token = source.Token;
             var query = Actor.Update(_connectionOptions, x => x.LastUpdate, DateTime.Now).Where().Equal(x => x.ActorId, 2).Build();
-            var managment = new SqlServerDatabaseManagement(Helper.GetConnectionString());
+            var managment = new SqlServerDatabaseManagement(GlobalFixture.CONNECTIONSTRING);
             using (var connection = await _connectionOptions.DatabaseManagement.GetConnectionAsync(token))
             {
                 int result = await managment.ExecuteNonQueryAsync(connection, query, token);
@@ -132,7 +132,7 @@ namespace GSqlQuery.SQLServer.Test
                               .Where()
                               .Equal(x => x.AddressId, 1)
                               .Build();
-            var managment = new SqlServerDatabaseManagement(Helper.GetConnectionString());
+            var managment = new SqlServerDatabaseManagement(GlobalFixture.CONNECTIONSTRING);
             using (var connection = await _connectionOptions.DatabaseManagement.GetConnectionAsync(token))
             {
                 source.Cancel();
@@ -145,7 +145,7 @@ namespace GSqlQuery.SQLServer.Test
         public async Task IConnection_executeNonQueryAsync_with_connection()
         {
             var query = Actor.Update(_connectionOptions, x => x.LastUpdate, DateTime.Now).Where().Equal(x => x.ActorId, 2).Build();
-            var managment = new SqlServerDatabaseManagement(Helper.GetConnectionString());
+            var managment = new SqlServerDatabaseManagement(GlobalFixture.CONNECTIONSTRING);
             using (SqlServerDatabaseConnection connection = await _connectionOptions.DatabaseManagement.GetConnectionAsync())
             {
                 int result = await managment.ExecuteNonQueryAsync(connection, query);
@@ -163,7 +163,7 @@ namespace GSqlQuery.SQLServer.Test
                               .Where()
                               .Equal(x => x.AddressId, 1)
                               .Build();
-            var managment = new SqlServerDatabaseManagement(Helper.GetConnectionString());
+            var managment = new SqlServerDatabaseManagement(GlobalFixture.CONNECTIONSTRING);
             using (SqlServerDatabaseConnection connection = await _connectionOptions.DatabaseManagement.GetConnectionAsync(token))
             {
                 int result = await managment.ExecuteNonQueryAsync(connection, query, token);
@@ -178,7 +178,7 @@ namespace GSqlQuery.SQLServer.Test
             CancellationToken token = source.Token;
 
             var query = Actor.Update(_connectionOptions, x => x.LastUpdate, DateTime.Now).Where().Equal(x => x.ActorId, 2).Build();
-            var managment = new SqlServerDatabaseManagement(Helper.GetConnectionString());
+            var managment = new SqlServerDatabaseManagement(GlobalFixture.CONNECTIONSTRING);
             using (SqlServerDatabaseConnection connection = await _connectionOptions.DatabaseManagement.GetConnectionAsync(token))
             {
                 source.Cancel();
@@ -192,7 +192,7 @@ namespace GSqlQuery.SQLServer.Test
         {
             var classOptions = ClassOptionsFactory.GetClassOptions(typeof(Actor));
             var query = Actor.Select(_connectionOptions).Build();
-            var managment = new SqlServerDatabaseManagement(Helper.GetConnectionString());
+            var managment = new SqlServerDatabaseManagement(GlobalFixture.CONNECTIONSTRING);
 
             var result = managment.ExecuteReader(query, classOptions.PropertyOptions);
             Assert.True(result.Any());
@@ -204,7 +204,7 @@ namespace GSqlQuery.SQLServer.Test
             var classOptions = ClassOptionsFactory.GetClassOptions(typeof(Address));
             var query = Address.Select(_connectionOptions, x => new { x.Location, x.AddressId }).Build();
 
-            var managment = new SqlServerDatabaseManagement(Helper.GetConnectionString(), new SqlServerDatabaseManagementEventsCustom());
+            var managment = new SqlServerDatabaseManagement(GlobalFixture.CONNECTIONSTRING, new SqlServerDatabaseManagementEventsCustom());
             using (var connection = _connectionOptions.DatabaseManagement.GetConnection())
             {
                 var result = managment.ExecuteReader(connection, query, classOptions.PropertyOptions);
@@ -217,7 +217,7 @@ namespace GSqlQuery.SQLServer.Test
         {
             var classOptions = ClassOptionsFactory.GetClassOptions(typeof(Actor));
             var query = Actor.Select(_connectionOptions).Build();
-            var managment = new SqlServerDatabaseManagement(Helper.GetConnectionString());
+            var managment = new SqlServerDatabaseManagement(GlobalFixture.CONNECTIONSTRING);
             using (SqlServerDatabaseConnection connection = _connectionOptions.DatabaseManagement.GetConnection())
             {
                 var result = managment.ExecuteReader(connection, query, classOptions.PropertyOptions);
@@ -230,7 +230,7 @@ namespace GSqlQuery.SQLServer.Test
         {
             var classOptions = ClassOptionsFactory.GetClassOptions(typeof(Address));
             var query = Address.Select(_connectionOptions).Build();
-            var managment = new SqlServerDatabaseManagement(Helper.GetConnectionString(), new SqlServerDatabaseManagementEventsCustom());
+            var managment = new SqlServerDatabaseManagement(GlobalFixture.CONNECTIONSTRING, new SqlServerDatabaseManagementEventsCustom());
             var result = await managment.ExecuteReaderAsync(query, classOptions.PropertyOptions);
             Assert.True(result.Any());
         }
@@ -243,7 +243,7 @@ namespace GSqlQuery.SQLServer.Test
 
             var classOptions = ClassOptionsFactory.GetClassOptions(typeof(Actor));
             var query = Actor.Select(_connectionOptions).Build();
-            var managment = new SqlServerDatabaseManagement(Helper.GetConnectionString());
+            var managment = new SqlServerDatabaseManagement(GlobalFixture.CONNECTIONSTRING);
             var result = await managment.ExecuteReaderAsync(query, classOptions.PropertyOptions, token);
             Assert.True(result.Any());
         }
@@ -256,7 +256,7 @@ namespace GSqlQuery.SQLServer.Test
 
             var classOptions = ClassOptionsFactory.GetClassOptions(typeof(Address));
             var query = Address.Select(_connectionOptions).Build();
-            var managment = new SqlServerDatabaseManagement(Helper.GetConnectionString());
+            var managment = new SqlServerDatabaseManagement(GlobalFixture.CONNECTIONSTRING);
             source.Cancel();
             await Assert.ThrowsAsync<OperationCanceledException>(async () =>
             await managment.ExecuteReaderAsync(query, classOptions.PropertyOptions, token));
@@ -267,7 +267,7 @@ namespace GSqlQuery.SQLServer.Test
         {
             var classOptions = ClassOptionsFactory.GetClassOptions(typeof(Actor));
             var query = Actor.Select(_connectionOptions).Build();
-            var managment = new SqlServerDatabaseManagement(Helper.GetConnectionString());
+            var managment = new SqlServerDatabaseManagement(GlobalFixture.CONNECTIONSTRING);
             using (var connection = await _connectionOptions.DatabaseManagement.GetConnectionAsync())
             {
                 var result = await managment.ExecuteReaderAsync(connection, query, classOptions.PropertyOptions);
@@ -283,7 +283,7 @@ namespace GSqlQuery.SQLServer.Test
 
             var classOptions = ClassOptionsFactory.GetClassOptions(typeof(Address));
             var query = Address.Select(_connectionOptions).Build();
-            var managment = new SqlServerDatabaseManagement(Helper.GetConnectionString(), new SqlServerDatabaseManagementEventsCustom());
+            var managment = new SqlServerDatabaseManagement(GlobalFixture.CONNECTIONSTRING, new SqlServerDatabaseManagementEventsCustom());
             using (var connection = await _connectionOptions.DatabaseManagement.GetConnectionAsync(token))
             {
                 var result = await managment.ExecuteReaderAsync(connection, query, classOptions.PropertyOptions, token);
@@ -299,7 +299,7 @@ namespace GSqlQuery.SQLServer.Test
 
             var classOptions = ClassOptionsFactory.GetClassOptions(typeof(Actor));
             var query = Actor.Select(_connectionOptions).Build();
-            var managment = new SqlServerDatabaseManagement(Helper.GetConnectionString());
+            var managment = new SqlServerDatabaseManagement(GlobalFixture.CONNECTIONSTRING);
             using (var connection = await _connectionOptions.DatabaseManagement.GetConnectionAsync(token))
             {
                 source.Cancel();
@@ -313,7 +313,7 @@ namespace GSqlQuery.SQLServer.Test
         {
             var classOptions = ClassOptionsFactory.GetClassOptions(typeof(Address));
             var query = Address.Select(_connectionOptions).Build();
-            var managment = new SqlServerDatabaseManagement(Helper.GetConnectionString(), new SqlServerDatabaseManagementEventsCustom());
+            var managment = new SqlServerDatabaseManagement(GlobalFixture.CONNECTIONSTRING, new SqlServerDatabaseManagementEventsCustom());
             using (SqlServerDatabaseConnection connection = await _connectionOptions.DatabaseManagement.GetConnectionAsync())
             {
                 var result = await managment.ExecuteReaderAsync(connection, query, classOptions.PropertyOptions);
@@ -329,7 +329,7 @@ namespace GSqlQuery.SQLServer.Test
 
             var classOptions = ClassOptionsFactory.GetClassOptions(typeof(Actor));
             var query = Actor.Select(_connectionOptions).Build();
-            var managment = new SqlServerDatabaseManagement(Helper.GetConnectionString());
+            var managment = new SqlServerDatabaseManagement(GlobalFixture.CONNECTIONSTRING);
             using (SqlServerDatabaseConnection connection = await _connectionOptions.DatabaseManagement.GetConnectionAsync(token))
             {
                 var result = await managment.ExecuteReaderAsync(connection, query, classOptions.PropertyOptions, token);
@@ -345,7 +345,7 @@ namespace GSqlQuery.SQLServer.Test
 
             var classOptions = ClassOptionsFactory.GetClassOptions(typeof(Address));
             var query = Address.Select(_connectionOptions).Build();
-            var managment = new SqlServerDatabaseManagement(Helper.GetConnectionString());
+            var managment = new SqlServerDatabaseManagement(GlobalFixture.CONNECTIONSTRING);
             using (SqlServerDatabaseConnection connection = await _connectionOptions.DatabaseManagement.GetConnectionAsync(token))
             {
                 source.Cancel();
@@ -359,7 +359,7 @@ namespace GSqlQuery.SQLServer.Test
         {
             Actor actor = new Actor(0, "PENELOPE", "PENELOPE", DateTime.Now);
             var query = actor.Insert(_connectionOptions).Build();
-            var managment = new SqlServerDatabaseManagement(Helper.GetConnectionString());
+            var managment = new SqlServerDatabaseManagement(GlobalFixture.CONNECTIONSTRING);
             var result = managment.ExecuteScalar<long>(query);
             Assert.True(result > 0);
         }
@@ -369,7 +369,7 @@ namespace GSqlQuery.SQLServer.Test
         {
             Address address = new Address(1, "47 MySakila Drive", null, "Alberta", 300, string.Empty, string.Empty, SqlGeometry.Point(153.1408538, -27.6333361, 0), DateTime.Now);
             var query = address.Insert(_connectionOptions).Build();
-            var managment = new SqlServerDatabaseManagement(Helper.GetConnectionString());
+            var managment = new SqlServerDatabaseManagement(GlobalFixture.CONNECTIONSTRING);
             using (var connection = _connectionOptions.DatabaseManagement.GetConnection())
             {
                 var result = managment.ExecuteScalar<long>(connection, query);
@@ -382,7 +382,7 @@ namespace GSqlQuery.SQLServer.Test
         {
             Actor actor = new Actor(0, "PENELOPE", "PENELOPE", DateTime.Now);
             var query = actor.Insert(_connectionOptions).Build();
-            var managment = new SqlServerDatabaseManagement(Helper.GetConnectionString());
+            var managment = new SqlServerDatabaseManagement(GlobalFixture.CONNECTIONSTRING);
             using (SqlServerDatabaseConnection connection = _connectionOptions.DatabaseManagement.GetConnection())
             {
                 var result = managment.ExecuteScalar<long>(connection, query);
@@ -395,7 +395,7 @@ namespace GSqlQuery.SQLServer.Test
         {
             Address address = new Address(1, "47 MySakila Drive", null, "Alberta", 300, string.Empty, string.Empty, SqlGeometry.Point(153.1408538, -27.6333361, 0), DateTime.Now);
             var query = address.Insert(_connectionOptions).Build();
-            var managment = new SqlServerDatabaseManagement(Helper.GetConnectionString());
+            var managment = new SqlServerDatabaseManagement(GlobalFixture.CONNECTIONSTRING);
             var result = await managment.ExecuteScalarAsync<long>(query);
             Assert.True(result > 0);
         }
@@ -407,7 +407,7 @@ namespace GSqlQuery.SQLServer.Test
             CancellationToken token = source.Token;
             Actor actor = new Actor(0, "PENELOPE", "PENELOPE", DateTime.Now);
             var query = actor.Insert(_connectionOptions).Build();
-            var managment = new SqlServerDatabaseManagement(Helper.GetConnectionString());
+            var managment = new SqlServerDatabaseManagement(GlobalFixture.CONNECTIONSTRING);
             var result = await managment.ExecuteScalarAsync<long>(query, token);
             Assert.True(result > 0);
         }
@@ -419,7 +419,7 @@ namespace GSqlQuery.SQLServer.Test
             CancellationToken token = source.Token;
             Address address = new Address(1, "47 MySakila Drive", null, "Alberta", 300, string.Empty, string.Empty, SqlGeometry.Point(153.1408538, -27.6333361, 0), DateTime.Now);
             var query = address.Insert(_connectionOptions).Build();
-            var managment = new SqlServerDatabaseManagement(Helper.GetConnectionString());
+            var managment = new SqlServerDatabaseManagement(GlobalFixture.CONNECTIONSTRING);
             source.Cancel();
             await Assert.ThrowsAsync<OperationCanceledException>(async () =>
             await managment.ExecuteScalarAsync<long>(query, token));
@@ -430,7 +430,7 @@ namespace GSqlQuery.SQLServer.Test
         {
             Actor actor = new Actor(0, "PENELOPE", "PENELOPE", DateTime.Now);
             var query = actor.Insert(_connectionOptions).Build();
-            var managment = new SqlServerDatabaseManagement(Helper.GetConnectionString());
+            var managment = new SqlServerDatabaseManagement(GlobalFixture.CONNECTIONSTRING);
             using (var connection = await _connectionOptions.DatabaseManagement.GetConnectionAsync())
             {
                 var result = await managment.ExecuteScalarAsync<long>(connection, query);
@@ -445,7 +445,7 @@ namespace GSqlQuery.SQLServer.Test
             CancellationToken token = source.Token;
             Address address = new Address(1, "47 MySakila Drive", null, "Alberta", 300, string.Empty, string.Empty, SqlGeometry.Point(153.1408538, -27.6333361, 0), DateTime.Now);
             var query = address.Insert(_connectionOptions).Build();
-            var managment = new SqlServerDatabaseManagement(Helper.GetConnectionString());
+            var managment = new SqlServerDatabaseManagement(GlobalFixture.CONNECTIONSTRING);
             using (var connection = await _connectionOptions.DatabaseManagement.GetConnectionAsync(token))
             {
                 var result = await managment.ExecuteScalarAsync<long>(connection, query, token);
@@ -460,7 +460,7 @@ namespace GSqlQuery.SQLServer.Test
             CancellationToken token = source.Token;
             Actor actor = new Actor(0, "PENELOPE", "PENELOPE", DateTime.Now);
             var query = actor.Insert(_connectionOptions).Build();
-            var managment = new SqlServerDatabaseManagement(Helper.GetConnectionString());
+            var managment = new SqlServerDatabaseManagement(GlobalFixture.CONNECTIONSTRING);
             using (var connection = await _connectionOptions.DatabaseManagement.GetConnectionAsync(token))
             {
                 source.Cancel();
@@ -474,7 +474,7 @@ namespace GSqlQuery.SQLServer.Test
         {
             Address address = new Address(1, "47 MySakila Drive", null, "Alberta", 300, string.Empty, string.Empty, SqlGeometry.Point(153.1408538, -27.6333361, 0), DateTime.Now);
             var query = address.Insert(_connectionOptions).Build();
-            var managment = new SqlServerDatabaseManagement(Helper.GetConnectionString());
+            var managment = new SqlServerDatabaseManagement(GlobalFixture.CONNECTIONSTRING);
             using (SqlServerDatabaseConnection connection = await _connectionOptions.DatabaseManagement.GetConnectionAsync())
             {
                 var result = await managment.ExecuteScalarAsync<long>(connection, query);
@@ -489,7 +489,7 @@ namespace GSqlQuery.SQLServer.Test
             CancellationToken token = source.Token;
             Actor actor = new Actor(0, "PENELOPE", "PENELOPE", DateTime.Now);
             var query = actor.Insert(_connectionOptions).Build();
-            var managment = new SqlServerDatabaseManagement(Helper.GetConnectionString());
+            var managment = new SqlServerDatabaseManagement(GlobalFixture.CONNECTIONSTRING);
             using (SqlServerDatabaseConnection connection = await _connectionOptions.DatabaseManagement.GetConnectionAsync(token))
             {
                 var result = await managment.ExecuteScalarAsync<long>(connection, query, token);
@@ -504,7 +504,7 @@ namespace GSqlQuery.SQLServer.Test
             CancellationToken token = source.Token;
             Address address = new Address(1, "47 MySakila Drive", null, "Alberta", 300, string.Empty, string.Empty, SqlGeometry.Point(153.1408538, -27.6333361, 0), DateTime.Now);
             var query = address.Insert(_connectionOptions).Build();
-            var managment = new SqlServerDatabaseManagement(Helper.GetConnectionString());
+            var managment = new SqlServerDatabaseManagement(GlobalFixture.CONNECTIONSTRING);
             using (SqlServerDatabaseConnection connection = await _connectionOptions.DatabaseManagement.GetConnectionAsync(token))
             {
                 source.Cancel();

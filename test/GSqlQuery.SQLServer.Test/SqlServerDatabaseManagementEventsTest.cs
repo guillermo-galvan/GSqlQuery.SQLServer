@@ -3,13 +3,14 @@ using Microsoft.Data.SqlClient;
 
 namespace GSqlQuery.SQLServer.Test
 {
+    [Collection("GlobalTestServer")]
     public class SqlServerDatabaseManagementEventsTest
     {
         private readonly SqlServerConnectionOptions _connectionOptions;
 
         public SqlServerDatabaseManagementEventsTest()
         {
-            _connectionOptions = new SqlServerConnectionOptions(Helper.GetConnectionString(), new SqlServerDatabaseManagementEventsCustom());
+            _connectionOptions = new SqlServerConnectionOptions(GlobalFixture.CONNECTIONSTRING, new SqlServerDatabaseManagementEventsCustom());
         }
 
         [Fact]

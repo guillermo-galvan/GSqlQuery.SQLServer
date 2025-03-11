@@ -3,18 +3,16 @@ using Microsoft.Data.SqlClient;
 
 namespace GSqlQuery.SQLServer.Test.BulkCopy
 {
+    [Collection("GlobalTestServer")]
     public class BulkCopyFactoryTest
     {
-        private readonly string CONNECTIONSTRING = Helper.GetConnectionString();
-
         private readonly IEnumerable<Actor> _actors;
         private readonly IEnumerable<Customer> _customers;
         private readonly SqlServerConnectionOptions _connection;
 
         public BulkCopyFactoryTest()
         {
-            Helper.CreateDataTable();
-            _connection = new SqlServerConnectionOptions(Helper.GetConnectionString(), new SqlServerDatabaseManagementEventsCustom());
+            _connection = new SqlServerConnectionOptions(GlobalFixture.CONNECTIONSTRING, new SqlServerDatabaseManagementEventsCustom());
             _actors = Actor.Select(_connection).Build().Execute();
             _customers = Customer.Select(_connection).Build().Execute();
         }
@@ -33,7 +31,7 @@ namespace GSqlQuery.SQLServer.Test.BulkCopy
             var beforeActorTotal = Actor.Select(_connection, x => new { x.ActorId }).Count().Build().Execute();
             var beforeCustomersTotal = Customer.Select(_connection, x => new { x.CustomerId }).Count().Build().Execute();
 
-            var bulkcopy = BulkCopyFactory.Create(CONNECTIONSTRING).Copy(_customers).Copy(_actors).Execute();
+            var bulkcopy = BulkCopyFactory.Create(GlobalFixture.CONNECTIONSTRING).Copy(_customers).Copy(_actors).Execute();
 
             var actorTotal = Actor.Select(_connection, x => new { x.ActorId }).Count().Build().Execute();
             var customersTotal = Customer.Select(_connection, x => new { x.CustomerId }).Count().Build().Execute();
@@ -46,13 +44,13 @@ namespace GSqlQuery.SQLServer.Test.BulkCopy
         [Fact]
         public void Execute_with_connection()
         {
-            using (SqlConnection connection = new SqlConnection(CONNECTIONSTRING))
+            using (SqlConnection connection = new SqlConnection(GlobalFixture.CONNECTIONSTRING))
             {
                 connection.Open();
                 var beforeActorTotal = Actor.Select(_connection, x => new { x.ActorId }).Count().Build().Execute();
                 var beforeCustomersTotal = Customer.Select(_connection, x => new { x.CustomerId }).Count().Build().Execute();
 
-                var bulkcopy = BulkCopyFactory.Create(CONNECTIONSTRING).Copy(_customers).Copy(_actors).Execute(connection);
+                var bulkcopy = BulkCopyFactory.Create(GlobalFixture.CONNECTIONSTRING).Copy(_customers).Copy(_actors).Execute(connection);
 
                 var actorTotal = Actor.Select(_connection, x => new { x.ActorId }).Count().Build().Execute();
                 var customersTotal = Customer.Select(_connection, x => new { x.CustomerId }).Count().Build().Execute();
@@ -67,7 +65,7 @@ namespace GSqlQuery.SQLServer.Test.BulkCopy
         [Fact]
         public void Execute_with_connection_Throw_exeception()
         {
-            Assert.Throws<ArgumentNullException>(() => BulkCopyFactory.Create(CONNECTIONSTRING).Copy(_actors).Execute(null));
+            Assert.Throws<ArgumentNullException>(() => BulkCopyFactory.Create(GlobalFixture.CONNECTIONSTRING).Copy(_actors).Execute(null));
         }
 
         [Fact]
@@ -76,7 +74,7 @@ namespace GSqlQuery.SQLServer.Test.BulkCopy
             var beforeActorTotal = await Actor.Select(_connection, x => new { x.ActorId }).Count().Build().ExecuteAsync();
             var beforeCustomersTotal = await Customer.Select(_connection, x => new { x.CustomerId }).Count().Build().ExecuteAsync();
 
-            var bulkcopy = await BulkCopyFactory.Create(CONNECTIONSTRING).Copy(_customers).Copy(_actors).ExecuteAsync();
+            var bulkcopy = await BulkCopyFactory.Create(GlobalFixture.CONNECTIONSTRING).Copy(_customers).Copy(_actors).ExecuteAsync();
 
             var actorTotal = await Actor.Select(_connection, x => new { x.ActorId }).Count().Build().ExecuteAsync();
             var customersTotal = await Customer.Select(_connection, x => new { x.CustomerId }).Count().Build().ExecuteAsync();
@@ -89,14 +87,14 @@ namespace GSqlQuery.SQLServer.Test.BulkCopy
         [Fact]
         public async Task ExecuteAsync_with_connection()
         {
-            using (SqlConnection connection = new SqlConnection(CONNECTIONSTRING))
+            using (SqlConnection connection = new SqlConnection(GlobalFixture.CONNECTIONSTRING))
             {
                 await connection.OpenAsync();
 
                 var beforeActorTotal = await Actor.Select(_connection, x => new { x.ActorId }).Count().Build().ExecuteAsync();
                 var beforeCustomersTotal = await Customer.Select(_connection, x => new { x.CustomerId }).Count().Build().ExecuteAsync();
 
-                var bulkcopy = await BulkCopyFactory.Create(CONNECTIONSTRING).Copy(_customers).Copy(_actors).ExecuteAsync(connection);
+                var bulkcopy = await BulkCopyFactory.Create(GlobalFixture.CONNECTIONSTRING).Copy(_customers).Copy(_actors).ExecuteAsync(connection);
 
                 var actorTotal = await Actor.Select(_connection, x => new { x.ActorId }).Count().Build().ExecuteAsync();
                 var customersTotal = await Customer.Select(_connection, x => new { x.CustomerId }).Count().Build().ExecuteAsync();
@@ -112,16 +110,16 @@ namespace GSqlQuery.SQLServer.Test.BulkCopy
         [Fact]
         public async Task ExecuteAsync_with_connection_Throw_exeception()
         {
-            await Assert.ThrowsAsync<ArgumentNullException>(async () => await BulkCopyFactory.Create(CONNECTIONSTRING).Copy(_customers).ExecuteAsync(null));
-            using (SqlConnection connection = new SqlConnection(CONNECTIONSTRING))
+            await Assert.ThrowsAsync<ArgumentNullException>(async () => await BulkCopyFactory.Create(GlobalFixture.CONNECTIONSTRING).Copy(_customers).ExecuteAsync(null));
+            using (SqlConnection connection = new SqlConnection(GlobalFixture.CONNECTIONSTRING))
             {
                 var beforeActorTotal = Actor.Select(_connection, x => new { x.ActorId }).Count().Build().Execute();
                 var beforeCustomersTotal = Customer.Select(_connection, x => new { x.CustomerId }).Count().Build().Execute();
 
-                await Assert.ThrowsAsync<InvalidOperationException>(async () => await BulkCopyFactory.Create(CONNECTIONSTRING).Copy(_customers).ExecuteAsync(connection));
+                await Assert.ThrowsAsync<InvalidOperationException>(async () => await BulkCopyFactory.Create(GlobalFixture.CONNECTIONSTRING).Copy(_customers).ExecuteAsync(connection));
 
                 SqlTransaction sqlTransaction = null;
-                await Assert.ThrowsAsync<ArgumentNullException>(async () => await BulkCopyFactory.Create(CONNECTIONSTRING).Copy(_customers).ExecuteAsync(SqlBulkCopyOptions.Default, sqlTransaction));
+                await Assert.ThrowsAsync<ArgumentNullException>(async () => await BulkCopyFactory.Create(GlobalFixture.CONNECTIONSTRING).Copy(_customers).ExecuteAsync(SqlBulkCopyOptions.Default, sqlTransaction));
             }
 
 
@@ -133,7 +131,7 @@ namespace GSqlQuery.SQLServer.Test.BulkCopy
             var beforeActorTotal = Actor.Select(_connection, x => new { x.ActorId }).Count().Build().Execute();
             var beforeCustomersTotal = Customer.Select(_connection, x => new { x.CustomerId }).Count().Build().Execute();
 
-            var bulkcopy = BulkCopyFactory.Create(CONNECTIONSTRING).Copy(_customers).Copy(_actors).Execute(SqlBulkCopyOptions.Default);
+            var bulkcopy = BulkCopyFactory.Create(GlobalFixture.CONNECTIONSTRING).Copy(_customers).Copy(_actors).Execute(SqlBulkCopyOptions.Default);
 
             var actorTotal = Actor.Select(_connection, x => new { x.ActorId }).Count().Build().Execute();
             var customersTotal = Customer.Select(_connection, x => new { x.CustomerId }).Count().Build().Execute();
@@ -146,7 +144,7 @@ namespace GSqlQuery.SQLServer.Test.BulkCopy
         [Fact]
         public void Execute_with_SqlBulkCopyOptions_and_SqlTransaction()
         {
-            using (SqlConnection connection = new SqlConnection(CONNECTIONSTRING))
+            using (SqlConnection connection = new SqlConnection(GlobalFixture.CONNECTIONSTRING))
             {
                 connection.Open();
                 var beforeActorTotal = Actor.Select(_connection, x => new { x.ActorId }).Count().Build().Execute();
@@ -154,7 +152,7 @@ namespace GSqlQuery.SQLServer.Test.BulkCopy
                 int bulkcopy = 0;
                 using (SqlTransaction sqlTransaction = connection.BeginTransaction())
                 {
-                    bulkcopy = BulkCopyFactory.Create(CONNECTIONSTRING).Copy(_customers).Copy(_actors).Execute(SqlBulkCopyOptions.Default, sqlTransaction);
+                    bulkcopy = BulkCopyFactory.Create(GlobalFixture.CONNECTIONSTRING).Copy(_customers).Copy(_actors).Execute(SqlBulkCopyOptions.Default, sqlTransaction);
                     sqlTransaction.Commit();
                 }
 
@@ -174,7 +172,7 @@ namespace GSqlQuery.SQLServer.Test.BulkCopy
             var beforeActorTotal = await Actor.Select(_connection, x => new { x.ActorId }).Count().Build().ExecuteAsync();
             var beforeCustomersTotal = await Customer.Select(_connection, x => new { x.CustomerId }).Count().Build().ExecuteAsync();
 
-            var bulkcopy = await BulkCopyFactory.Create(CONNECTIONSTRING).Copy(_customers).Copy(_actors).ExecuteAsync(SqlBulkCopyOptions.Default);
+            var bulkcopy = await BulkCopyFactory.Create(GlobalFixture.CONNECTIONSTRING).Copy(_customers).Copy(_actors).ExecuteAsync(SqlBulkCopyOptions.Default);
 
             var actorTotal = await Actor.Select(_connection, x => new { x.ActorId }).Count().Build().ExecuteAsync();
             var customersTotal = await Customer.Select(_connection, x => new { x.CustomerId }).Count().Build().ExecuteAsync();
@@ -187,7 +185,7 @@ namespace GSqlQuery.SQLServer.Test.BulkCopy
         [Fact]
         public async Task ExecuteAsync_with_SqlBulkCopyOptions_and_SqlTransaction()
         {
-            using (SqlConnection connection = new SqlConnection(CONNECTIONSTRING))
+            using (SqlConnection connection = new SqlConnection(GlobalFixture.CONNECTIONSTRING))
             {
                 await connection.OpenAsync();
                 var beforeActorTotal = await Actor.Select(_connection, x => new { x.ActorId }).Count().Build().ExecuteAsync();
@@ -195,7 +193,7 @@ namespace GSqlQuery.SQLServer.Test.BulkCopy
                 int bulkcopy = 0;
                 using (SqlTransaction sqlTransaction = connection.BeginTransaction())
                 {
-                    bulkcopy = await BulkCopyFactory.Create(CONNECTIONSTRING).Copy(_customers).Copy(_actors).ExecuteAsync(SqlBulkCopyOptions.Default, sqlTransaction);
+                    bulkcopy = await BulkCopyFactory.Create(GlobalFixture.CONNECTIONSTRING).Copy(_customers).Copy(_actors).ExecuteAsync(SqlBulkCopyOptions.Default, sqlTransaction);
                     sqlTransaction.Commit();
                 }
 

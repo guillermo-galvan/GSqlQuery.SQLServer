@@ -3,14 +3,14 @@ using Microsoft.SqlServer.Types;
 
 namespace GSqlQuery.SQLServer.Test
 {
+    [Collection("GlobalTestServer")]
     public class SqlServerDatabaseTransactionTest
     {
         private readonly SqlServerConnectionOptions _connectionOptions;
 
         public SqlServerDatabaseTransactionTest()
         {
-            Helper.CreateDataTable();
-            _connectionOptions = new SqlServerConnectionOptions(Helper.GetConnectionString(), new SqlServerDatabaseManagementEventsCustom());
+            _connectionOptions = new SqlServerConnectionOptions(GlobalFixture.CONNECTIONSTRING, new SqlServerDatabaseManagementEventsCustom());
         }
 
 
