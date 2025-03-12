@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-	  <TargetFrameworks>net8.0;net9.0;net462</TargetFrameworks>
+	  <TargetFrameworks>net8.0;net9.0;Net472</TargetFrameworks>
 	  <UserSecretsId>e1a7773d-2385-4e1a-834b-753197d79799</UserSecretsId>
   </PropertyGroup>
 
@@ -20,11 +20,11 @@
 
   <ItemGroup>
 	  <PackageReference Include="BenchmarkDotNet" Version="0.14.0" />
-	  <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="9.0.0" />
-	  <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.0.0" />
+	  <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="9.0.2" />
+	  <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.0.2" />
     <PackageReference Include="Microsoft.SqlServer.DacFx" Version="162.5.57" />
-    <PackageReference Include="Microsoft.SqlServer.SqlManagementObjects" Version="172.52.0" />
-	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
+    <PackageReference Include="Microsoft.SqlServer.SqlManagementObjects" Version="172.64.0" />
+	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.2" />
   </ItemGroup>
 
   <ItemGroup>

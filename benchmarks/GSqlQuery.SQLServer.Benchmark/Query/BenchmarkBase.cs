@@ -10,7 +10,7 @@ namespace GSqlQuery.SQLServer.Benchmark.Query
 {
     [SimpleJob(RuntimeMoniker.Net90, baseline: true)]
     [SimpleJob(RuntimeMoniker.Net80)]
-    [SimpleJob(RuntimeMoniker.Net462)]
+    [SimpleJob(RuntimeMoniker.Net472)]
     [MinColumn, MaxColumn, MeanColumn, MedianColumn]
     public abstract class BenchmarkBase
     {

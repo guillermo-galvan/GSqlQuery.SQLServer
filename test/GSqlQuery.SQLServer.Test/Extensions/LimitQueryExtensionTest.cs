@@ -2,14 +2,14 @@
 
 namespace GSqlQuery.SQLServer.Test.Extensions
 {
+    [Collection("GlobalTestServer")]
     public class LimitQueryExtensionTest
     {
         private readonly SqlServerConnectionOptions _connectionOptions;
 
         public LimitQueryExtensionTest()
         {
-            Helper.CreateDataTable();
-            _connectionOptions = new SqlServerConnectionOptions(Helper.GetConnectionString(), new SqlServerDatabaseManagementEventsCustom());
+            _connectionOptions = new SqlServerConnectionOptions(GlobalFixture.CONNECTIONSTRING, new SqlServerDatabaseManagementEventsCustom());
         }
 
         [Fact]
